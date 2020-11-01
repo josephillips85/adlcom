@@ -1,7 +1,7 @@
 # AdLcom
 A AdLib Driver for serial port.
 
-This is a AdLib TSR Program from MS-DOS Forked from the project AdLipt instead of using LPT port is using COM port to send the Register and value to a serial port.
+This is a AdLib TSR Program for MS-DOS Forked from the project AdLipt instead of using LPT port is using COM port to send the Register and value to a serial port.
 
 ## Hardware Requirements
  - OPL2Board https://www.tindie.com/products/cheerful/opl2-audio-board/
