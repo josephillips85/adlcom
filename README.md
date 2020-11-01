@@ -23,13 +23,13 @@ Before usage you should follow the instructions from
 https://github.com/DhrBaksteen/ArduinoOPL2
 
 
-Connect the Arduino to the OPL2Board and Connect the MAX232 with this wiring guide.
+Connect the Arduino to the OPL2Board and Connect the MAX232 with this wiring guide.<br />
 
-MAX232 PIN          Arduino
-VCC <-------------> 3.3V
-TX  <-------------> TX
-RX  <-------------> RX
-GND <-------------> GND
+MAX232 PIN          Arduino\
+VCC "<------------->" 3.3V\
+TX  "<------------->" TX\
+RX  "<------------->" RX\
+GND "<------------->" GND
 
 
 
@@ -85,7 +85,7 @@ https://www.paypal.com/paypalme2/josephillips85
 
 ## Copying
 
-Copyright © 2020 Jose Phillips
+Copyright © 2020 Jose Phillips\
 Copyright © 2020 Peter De Wachter (pdewacht@gmail.com)
 
 Permission to use, copy, modify, and distribute this software for any
