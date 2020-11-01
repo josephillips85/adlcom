@@ -85,7 +85,7 @@ https://www.paypal.com/paypalme2/josephillips85
 
 ## Copying
 
-Copyright © 2020 Jose Phillips 
+Copyright © 2020 Jose Phillips
 Copyright © 2020 Peter De Wachter (pdewacht@gmail.com)
 
 Permission to use, copy, modify, and distribute this software for any
