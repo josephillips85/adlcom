@@ -14,7 +14,7 @@ This is a AdLib TSR Program from MS-DOS Forked from the project AdLipt instead o
 
 Download the driver from [the Github releases tab][2].
 
-[2]: https://github.com/josephillips85/adlipt/releases/latest
+[2]: https://github.com/josephillips85/adlcom/releases/latest
 
 ## Wiring instructions
 
