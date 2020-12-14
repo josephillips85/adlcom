@@ -71,6 +71,8 @@ Load ADLCOM using the command:
   regular, which might help with software that's very timing
   sensitive.
 
+- **`OPL3`** Enable support for OPL3 Board.should be used with Nuke.YKT
+  Protocol.
 
 ## Source code
 
