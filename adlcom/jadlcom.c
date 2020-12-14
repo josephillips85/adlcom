@@ -126,7 +126,7 @@ static int install(char *cmd_line) {
     return 0;
   }
   init_comport(config.com_port);
-  hw_reset(config.com_port);
+  hw_reset(config.com_port,config.opl3);
 
   ports = collect_ports(&config);
   for (i = 0; ports[i]; i++) {

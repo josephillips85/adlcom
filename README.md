@@ -4,7 +4,9 @@ A AdLib Driver for serial port.
 This is a AdLib TSR Program for MS-DOS Forked from the project AdLipt instead of using LPT port is using COM port to send the Register and value to a serial port.
 
 ## Hardware Requirements
- - OPL2Board https://www.tindie.com/products/cheerful/opl2-audio-board/
+ - OPL2Board https://www.tindie.com/products/cheerful/opl2-audio-board/ 
+ Or
+ - OPL3Duo https://www.tindie.com/products/cheerful/opl3-duo/
  - Arduino Nano
  - MAX232L https://www.amazon.com/gp/product/B01N42QW8X/ref=ppx_yo_dt_b_asin_title_o03_s01?ie=UTF8&psc=1
  - 386 Computer
@@ -58,7 +60,7 @@ Load ADLCOM using the command:
 
 - **`COM1`/`COM2`/`COM3`/`COM4`** Select printer port.
 
-- **`BLASTER=220`** Enable Sound Blaster FM emulation. ADLiPT will
+- **`BLASTER=220`** Enable Sound Blaster FM emulation. ADLCOM will
   intercept the Sound Blaster FM ports in addition to the standard
   AdLib ports. (It won't however fake enough of a Sound Blaster to
   pass installation checks, so this won't be very useful if you don't

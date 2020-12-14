@@ -1,5 +1,4 @@
 #include <stddef.h>
-
 #pragma code_seg("RESIDENT")
 #pragma data_seg("RESIDENT", "CODE")
 
@@ -7,6 +6,9 @@
 
 
 struct config RESIDENT config;
+
+//Nuke.YKT Variable
+unsigned opl3Reg;
 
 
 /* I/O port access */
@@ -115,12 +117,36 @@ porthandler *get_port_handler(unsigned port, unsigned flags) {
 
 #define DELAY_OPL2_ADDRESS 6
 #define DELAY_OPL2_DATA 35
+#define DELAY_SERIAL_DATA 35
 #define DELAY_OPL3 6
 
 char _WCI86FAR * RESIDENT port_trap_ip;
 
 static short address;
 static char timer_reg;
+
+
+  //OPL3 Nuke.YKT Section
+static void WRITE_REG_NUKE(unsigned reg,unsigned bank,unsigned port){
+  char sendBuffer;
+  opl3Reg = reg;
+  
+  sendBuffer = 0x80 | ((bank & 0x03) << 2) | (address >> 6);
+  outp(port,sendBuffer);
+  
+}
+
+ static void WRITE_VAL_NUKE(char val,unsigned port){
+   char sendBuffer[2];
+		
+	 sendBuffer[0] = ((opl3Reg & 0x3f) << 1) | (val >> 7);
+	 sendBuffer[1] = (val & 0x7f);
+
+   outp(port, sendBuffer[0]);
+   delay(port, DELAY_SERIAL_DATA);   
+   outp(port, sendBuffer[1]);
+   delay(port, DELAY_SERIAL_DATA);
+}
 
 
 #define WRITE_COM(value, flags)                 \
@@ -132,7 +158,6 @@ static char timer_reg;
     outp(port, (flags) ^ PP_INIT);              \
     outp(port, (flags));                        \
   } while (0)
-
 
 #ifdef _M_I86
 #pragma aux delay parm [dx] [bx] modify exact [ax bx]
@@ -158,8 +183,16 @@ static void cond_delay(unsigned port, char cnt) {
 unsigned emulate_opl2_write_address(unsigned ax) {
   unsigned com_port = config.com_port;
   address = ax & 0xFF;
-  WRITE_COM(ax, PP_INIT | PP_NOT_SELECT | PP_NOT_STROBE);
-  cond_delay(com_port, DELAY_OPL2_ADDRESS);
+  if (!config.opl3){
+    WRITE_COM(ax, PP_INIT | PP_NOT_SELECT | PP_NOT_STROBE);
+    cond_delay(com_port, DELAY_OPL2_ADDRESS);
+  }
+  else {
+    
+    WRITE_REG_NUKE(ax,0,com_port);
+    delay(com_port,DELAY_SERIAL_DATA);
+  }
+  
   return ax;
 }
 
@@ -169,7 +202,11 @@ unsigned emulate_opl2_write_data(unsigned ax) {
   if (address == 4) {
     timer_reg = ax;
   }
-  WRITE_COM(ax, PP_INIT | PP_NOT_SELECT);
+  if (!config.opl3){
+  WRITE_COM(ax, PP_INIT | PP_NOT_SELECT);}
+  else{
+    WRITE_VAL_NUKE(ax,com_port);
+     }
   cond_delay(com_port, delay_cnt[config.opl3]);
   return ax;
 }
@@ -187,8 +224,10 @@ unsigned emulate_opl3_write_high_address(unsigned ax) {
     return ax;
   }
   address = 0x100 | (ax & 0xFF);
-  WRITE_COM(ax, PP_INIT | PP_NOT_STROBE);
+  //WRITE_COM(ax, PP_INIT | PP_NOT_STROBE);
+  WRITE_REG_NUKE(ax, 0,com_port); 
   cond_delay(com_port, DELAY_OPL3);
+ 
   return ax;
 }
 
@@ -264,19 +303,29 @@ unsigned emulate_opl3_read(unsigned ax) {
 
 #pragma code_seg("CODE")
 
-void hw_reset(unsigned com_port) {
-    int i;
-    for (i = 0x00; i < 0xFF; i++) {
-		if (i >= 0x40 && i <= 0x55) {
-			// Set channel volumes to minimum.
-			outp(com_port,i);
-      outp(com_port,0x3F);
-		} else {
-      outp(com_port,i);
-			outp(com_port,0x00);
-		}
-	}
-}
+ void hw_reset(unsigned com_port,char nuke) {
+     int i;
+     for (i = 0x00; i < 0xFF; i++) {
+ 		if (i >= 0x40 && i <= 0x55) {
+     	// Set channel volumes to minimum.
+       if (!nuke){
+ 			outp(com_port,i);
+       outp(com_port,0x3F);}
+       else{
+         WRITE_REG_NUKE(i,0,com_port);
+         WRITE_VAL_NUKE(0x3F,com_port);
+       }
+ 		} else {
+       if (!nuke){
+       outp(com_port,i);
+ 			outp(com_port,0x00);}
+       else{
+         WRITE_REG_NUKE(i,0,com_port);
+         WRITE_VAL_NUKE(0x00,com_port);
+       }
+ 		}
+ 	}
+ } 
 
 
 
@@ -286,10 +335,8 @@ void init_comport(unsigned com_port) {
    outp(com_port + 0, 0x01);    // Set divisor to 1 (lo byte) 115200 baud
    outp(com_port + 1, 0x00);    //                  (hi byte)
    outp(com_port + 3, 0x03);    // 8 bits, no parity, one stop bit
- //  outp(com_port + 2, 0xC7);    // Enable FIFO, clear them, with 14-byte threshold
-//   outp(com_port + 4, 0x0B);    // IRQs enabled, RTS/DSR set
-  
-  
+   outp(com_port + 2, 0xC7);    // Enable FIFO, clear them, with 14-byte threshold
+   outp(com_port + 4, 0x0B);    // IRQs enabled, RTS/DSR set
 }
 
 #pragma code_seg("RESIDENT")

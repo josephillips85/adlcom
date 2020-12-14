@@ -87,5 +87,6 @@ porthandler *get_port_handler(unsigned port, unsigned flags);
 #endif
 
 
-extern void hw_reset(unsigned port);
+extern void hw_reset(unsigned port,char nuke);
 extern void init_comport (unsigned port);
+

@@ -313,7 +313,7 @@ static void check_jemm(char bios_id) {
 static bool uninstall(struct config __far *cfg) {
   struct iisp_header __far *current_amis_handler;
 
-  hw_reset(cfg->com_port);
+  hw_reset(cfg->com_port,config.opl3);
 
   if (cfg->emm_type == EMM_EMM386 && !shutdown_emm386(cfg)) {
     return false;
@@ -357,7 +357,7 @@ static void status(struct config __far *cfg) {
   cputs("loaded\r\n");
 
   cputs("  Hardware: ");
-  cputs(cfg->opl3 ? "OPL3COM" : "OPL2Board Arduino");
+  cputs(cfg->opl3 ? "OPL3Duo Nuke.YKT Protocol" : "OPL2Board Arduino");
   cputs("\r\n");
 
   cputs("  Port: COM");
@@ -455,7 +455,7 @@ int main(void) {
     status(resident);
     if (resident) {
       init_comport(resident->com_port);
-      hw_reset(resident->com_port);
+      hw_reset(resident->com_port,resident->opl3);
       
     }
     return 0;
@@ -497,7 +497,7 @@ int main(void) {
   status(&config);
   /* Init Comport before do anything */
   init_comport(config.com_port);
-  hw_reset(config.com_port);
+  hw_reset(config.com_port,config.opl3);
   
   /* hook AMIS interrupt */
   amis_handler.next_handler = _dos_getvect(0x2D);
