@@ -1,0 +1,107 @@
+---
+name: DMX engine AdLib detection
+find: |
+  bits 32
+  test cl,0xe0
+  jnz L1
+  and ebx,0xe0
+  cmp ebx,0xc0
+  jnz L1
+  mov edx,2
+  jmp short L2
+  L1: xor edx,edx
+  L2:
+replace: |
+  bits 32
+  mov edx,2
+---
+name: DMX engine AdLib output (part A)
+find: |
+  ; ax: port
+  ; dx: register
+  ; bx: data
+  bits 32
+  sub esp, byte +0x4
+  mov ecx,eax
+  mov [esp],bl
+  mov eax,edx
+  xor edx,edx
+  mov dx,cx
+  out dx,al
+  mov ebx,[dword ANYDWORD]
+  test ebx,ebx
+  jng L2
+  L1: xor edx,edx
+  mov dx,cx
+  inc edx
+  dec ebx
+  sub eax,eax
+  in al,dx
+  test ebx,ebx
+  jg L1
+  L2: xor edx,edx
+  mov dx,cx
+  mov al,[esp]
+  inc edx
+  out dx,al
+  mov ebx,[dword ANYDWORD]
+  test ebx,ebx
+  jng L4
+  L3: xor edx,edx
+  mov dx,cx
+  dec ebx
+  sub eax,eax
+  in al,dx
+  test ebx,ebx
+  jg L3
+  L4: add esp,byte +0x4
+replace: |
+  ; we need to leave room for the relocations,
+  ; so we have carefully places 'test eax, 0' opcodes...
+  bits 32
+  cmp ax, 0x388
+  jne SKIP
+  mov al, dl
+  mov dx, PORT
+  out dx, al
+  inc edx
+  inc edx
+  mov al, 13
+  test eax, 0
+  nop
+  mov al, 9
+  nop
+  mov al, 13
+  nop
+  ;in al,0
+  ;in al,0
+  ;in al,0
+  ;in al,0
+  ;in al,0
+  ;in al,0
+  dec edx
+  dec edx
+
+  mov cx, 0
+  L500: inc cx
+  cmp cx, 120
+  jne L500
+  mov al, bl
+  out dx, al
+  inc edx
+  inc edx
+  mov al, 12
+  nop
+  mov al, 8
+  nop
+  mov al, 12
+  nop
+  ;test eax, 0
+  push ecx
+  xor ecx, ecx
+  mov cx, 0
+  L1: inc cx
+  cmp cx, 200
+  jne L1
+  pop ecx
+  SKIP:

@@ -58,7 +58,7 @@ Load ADLCOM using the command:
 ### Options
 
 
-- **`COM1`/`COM2`/`COM3`/`COM4`** Select printer port.
+- **`COM1`/`COM2`/`COM3`/`COM4`** Select COM port.
 
 - **`BLASTER=220`** Enable Sound Blaster FM emulation. ADLCOM will
   intercept the Sound Blaster FM ports in addition to the standard
@@ -89,7 +89,7 @@ https://www.paypal.com/paypalme2/josephillips85
 
 ## Copying
 
-Copyright © 2020 Jose Phillips\
+Copyright © 2023 Jose Phillips
 Copyright © 2020 Peter De Wachter (pdewacht@gmail.com)
 
 Permission to use, copy, modify, and distribute this software for any
